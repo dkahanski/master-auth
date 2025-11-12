@@ -1,16 +1,37 @@
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import SignInTab from './_components/sign-in-tab';
+import SignUpTab from './_components/sign-up-tab';
 
 export default function LoginPage() {
 	return (
-		<Tabs defaultValue="account" className="w-[400px]">
+		<Tabs defaultValue="signin" className="mx-auto w-full my-6 px-4">
 			<TabsList>
-				<TabsTrigger value="account">Account</TabsTrigger>
-				<TabsTrigger value="password">Password</TabsTrigger>
+				<TabsTrigger value="signin">Sign In</TabsTrigger>
+				<TabsTrigger value="signup">Sign Up</TabsTrigger>
 			</TabsList>
-			<TabsContent value="account">
-				Make changes to your account here.
+
+			<TabsContent value="signin">
+				<Card>
+					<CardHeader>
+						<CardTitle className="text-bold">Sign In</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<SignInTab />
+					</CardContent>
+				</Card>
 			</TabsContent>
-			<TabsContent value="password">Change your password here.</TabsContent>
+
+			<TabsContent value="signup">
+				<Card>
+					<CardHeader>
+						<CardTitle>Sign Up</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<SignUpTab />
+					</CardContent>
+				</Card>
+			</TabsContent>
 		</Tabs>
 	);
 }

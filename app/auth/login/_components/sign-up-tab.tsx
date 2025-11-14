@@ -17,7 +17,6 @@ import { Button } from '@/components/ui/button';
 import { LoadingSwap } from '@/components/ui/loading-swap';
 import { authClient } from '@/lib/auth-client';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
 
 const signUpSchene = z.object({
 	name: z.string().min(1),
@@ -27,8 +26,11 @@ const signUpSchene = z.object({
 
 type SignUpForm = z.infer<typeof signUpSchene>;
 
-export default function SignUpTab() {
-	const router = useRouter();
+export default function SignUpTab({
+	openEmailVerificationTab,
+}: {
+	openEmailVerificationTab: (email: string) => void;
+}) {
 	const form = useForm<SignUpForm>({
 		resolver: zodResolver(signUpSchene),
 		defaultValues: {
@@ -40,17 +42,18 @@ export default function SignUpTab() {
 	const { isSubmitting } = form.formState;
 
 	const handleSignUp = async (data: SignUpForm) => {
-		authClient.signUp.email(
+		const res = await authClient.signUp.email(
 			{ ...data },
 			{
 				onError: (error) => {
 					toast.error(error.error.message || 'Filed to Sign Up');
 				},
-				onSuccess: () => {
-					router.push('/');
-				},
 			}
 		);
+
+		if (res.error == null && !res.data.user.emailVerified) {
+			openEmailVerificationTab(data.email);
+		}
 	};
 
 	return (

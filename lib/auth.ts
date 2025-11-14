@@ -1,10 +1,12 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { db } from '@/lib/db/db';
 import { nextCookies } from 'better-auth/next-js';
+import { createAuthMiddleware } from 'better-auth/api';
 import env from '@/lib/env';
-import { passwordResetEmail } from './email/password-reset-email';
-import { verificationEmail } from './email/verificaton-email';
+import { db } from '@/lib/db/db';
+import { passwordResetEmail } from '@/lib/email/password-reset-email';
+import { verificationEmail } from '@/lib/email/verificaton-email';
+import { sendWelcomeEmail } from '@/lib/email/welcom-email';
 
 export const auth = betterAuth({
 	emailAndPassword: {
@@ -37,4 +39,18 @@ export const auth = betterAuth({
 	database: drizzleAdapter(db, {
 		provider: 'pg',
 	}),
+	hooks: {
+		after: createAuthMiddleware(async (ctx) => {
+			if (ctx.path.startsWith('/sign-up')) {
+				const user = ctx.context.newSession?.user ?? {
+					name: ctx.body.name,
+					email: ctx.body.email,
+				};
+
+				if (user !== null) {
+					await sendWelcomeEmail(user);
+				}
+			}
+		}),
+	},
 });

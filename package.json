@@ -41,6 +41,7 @@
 		"zod": "^4.1.12"
 	},
 	"devDependencies": {
+		"@iconify-json/tabler": "^1.2.23",
 		"@tailwindcss/postcss": "^4",
 		"@types/node": "^20",
 		"@types/pg": "^8.15.6",

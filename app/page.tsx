@@ -21,13 +21,19 @@ export default function Home() {
 				) : (
 					<>
 						<h1>Wellcom {session.user.name}!</h1>
-						<Button
-							size="lg"
-							variant="destructive"
-							onClick={() => authClient.signOut()}
-						>
-							Sign Out
-						</Button>
+						<div className="flex gap-4 justify-center">
+							<Button size="lg">
+								<Link href="/profile">Profile</Link>{' '}
+							</Button>
+
+							<Button
+								size="lg"
+								variant="destructive"
+								onClick={() => authClient.signOut()}
+							>
+								Sign Out
+							</Button>
+						</div>
 					</>
 				)}
 			</div>

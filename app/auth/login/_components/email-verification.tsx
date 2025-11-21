@@ -6,6 +6,7 @@ import { useState } from 'react';
 
 export function EmailVerification({ email }: { email: string }) {
 	const [loading, setLoading] = useState(false);
+    
 	return (
 		<div className="space-y-4">
 			<p className="text-sm text-muted-foreground mt-2">

@@ -1,6 +1,11 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { auth } from '@/lib/auth';
 import {
 	IconArrowBack,
 	IconUser,
@@ -15,6 +20,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import ProfileUpdateForm from './_components/profile-update-form';
+import { auth } from '@/lib/auth';
+import SetPasswordButton from './_components/set-password-button';
+import LoadingSuspense from '@/components/loading-suspense';
+import ChangePasswordForm from './_components/change-password-form';
 
 export default async function ProfilePage() {
 	const session = await auth.api.getSession({ headers: await headers() });
@@ -74,7 +83,52 @@ export default async function ProfilePage() {
 						</CardContent>
 					</Card>
 				</TabsContent>
+				<TabsContent value="security">
+					<LoadingSuspense>
+						<SecurityTab email={session.user.email} />
+					</LoadingSuspense>
+				</TabsContent>
 			</Tabs>
+		</div>
+	);
+}
+
+async function SecurityTab({ email }: { email: string }) {
+	const userAccounts = await auth.api.listUserAccounts({
+		headers: await headers(),
+	});
+
+	const hasPasswordAccounts = userAccounts.some(
+		(a) => a.providerId === 'credential'
+	);
+
+	return (
+		<div>
+			{hasPasswordAccounts ? (
+				<Card>
+					<CardHeader>
+						<CardTitle>Change Password</CardTitle>
+						<CardDescription>
+							Update your password for improved security
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<ChangePasswordForm />
+					</CardContent>
+				</Card>
+			) : (
+				<Card>
+					<CardHeader>
+						<CardTitle>Set Password</CardTitle>
+						<CardDescription>
+							We will send you a password reset email to set up a password.
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<SetPasswordButton email={email} />
+					</CardContent>
+				</Card>
+			)}
 		</div>
 	);
 }
